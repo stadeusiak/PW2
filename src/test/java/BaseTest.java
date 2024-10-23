@@ -11,6 +11,7 @@ import java.util.Objects;
 abstract class BaseTest {
 
     protected static final String BASE_URL = "https://www.saucedemo.com/";
+    protected static final String LOCAL_CHROME_PATH = "C:\\Program Files\\Google\\Chrome1\\Application\\chrome.exe";
     protected Playwright playwright;
     protected Page page;
 
@@ -20,7 +21,7 @@ abstract class BaseTest {
         var launchOptions = new BrowserType.LaunchOptions();
 
         String chromePath = Objects.requireNonNullElse(System.getenv("CHROME_PATH"),
-                "C:\\Program Files\\Google\\Chrome1\\Application\\chrome.exe");
+                LOCAL_CHROME_PATH);
 
         launchOptions.setExecutablePath(Path.of(chromePath));
         launchOptions.setHeadless(false);
