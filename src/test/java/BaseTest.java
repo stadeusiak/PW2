@@ -2,19 +2,18 @@ import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
+import lombok.extern.slf4j.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Properties;
 
+@Slf4j
 abstract class BaseTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseTest.class);
     private String BASE_URL;
     private String LOCAL_CHROME_PATH;
     protected Playwright playwright;
@@ -36,7 +35,7 @@ abstract class BaseTest {
             page = browser.newPage();
             page.navigate(BASE_URL);
         } catch (Exception e) {
-            logger.error("Failed to launch the browser or navigate to the URL.", e);
+            log.error("Failed to launch the browser or navigate to the URL.", e);
             throw new RuntimeException(e);
         }
     }
@@ -58,7 +57,7 @@ abstract class BaseTest {
             BASE_URL = properties.getProperty("base.url");
             LOCAL_CHROME_PATH = properties.getProperty("chrome.path");
         } catch (IOException e) {
-            logger.error("Error during properties loading.", e);
+            log.error("Error during properties loading.", e);
             throw new RuntimeException("Error during properties loading.", e);
         }
     }
