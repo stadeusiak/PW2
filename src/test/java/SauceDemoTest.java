@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.Test;
 import sauce.LoginPage;
 
-public class SauceDemoTest extends BaseTest {
+class SauceDemoTest extends BaseTest {
 
     @Test
     public void SimpleLoginTest() {
