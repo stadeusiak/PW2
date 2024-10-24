@@ -1,13 +1,16 @@
+package utils;
+
 import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
-import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -15,15 +18,17 @@ import java.util.Optional;
 import java.util.Properties;
 
 @Slf4j
-abstract class BaseTest {
+@ExtendWith(TestWatcherExtension.class)
+public abstract  class BaseTest {
 
+    protected BrowserContext context;
     private String BASE_URL;
     private String LOCAL_CHROME_PATH;
-    protected Playwright playwright;
-    protected Browser browser;
+    protected static Playwright playwright;
+    protected static Browser browser;
     protected Page page;
-    private String USERNAME;
-    private String PASSWORD;
+    private static String USERNAME;
+    private static String PASSWORD;
 
     @BeforeEach
     public void setupTest() {
@@ -35,11 +40,12 @@ abstract class BaseTest {
         log.info("Using Chrome executable path: " + chromePath);
 
         launchOptions.setExecutablePath(Path.of(chromePath));
-        launchOptions.setHeadless(false);
+        launchOptions.setHeadless(true);
 
         try {
             browser = playwright.chromium().launch(launchOptions);
-            page = browser.newPage();
+            context = browser.newContext();
+            page = context.newPage();
             page.navigate(BASE_URL);
         } catch (Exception e) {
             log.error("Failed to launch the browser or navigate to the URL.", e);
@@ -51,20 +57,6 @@ abstract class BaseTest {
 
         if (USERNAME == null || PASSWORD == null) {
             throw new RuntimeException("Login credentials are not set in environment variables.");
-        }
-    }
-
-    @AfterEach
-    public void tearDown() {
-        try {
-            byte[] screenshot = page.screenshot(new Page.ScreenshotOptions().setPath(Path.of("build/screenshots/login_test.png")));
-            Allure.addAttachment("Login Screen", new ByteArrayInputStream(screenshot));
-        } catch (Exception e) {
-            log.error("Error while taking screenshot in tearDown", e);
-        } finally {
-            Optional.ofNullable(page).ifPresent(Page::close);
-            Optional.ofNullable(browser).ifPresent(Browser::close);
-            Optional.ofNullable(playwright).ifPresent(Playwright::close);
         }
     }
 
@@ -89,5 +81,19 @@ abstract class BaseTest {
 
     public String getPassword() {
         return PASSWORD;
+    }
+
+    @AfterEach
+    public void tearDown() {
+        if (TestWatcherExtension.isTestFailed()) {
+            Optional.ofNullable(page).ifPresent(Page::close);
+            Optional.ofNullable(context).ifPresent(BrowserContext::close);
+        }
+    }
+
+    @AfterAll
+    public static void tearDownAll() {
+        Optional.ofNullable(browser).ifPresent(Browser::close);
+        Optional.ofNullable(playwright).ifPresent(Playwright::close);
     }
 }

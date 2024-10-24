@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -13,53 +12,48 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <rest-assured.version>5.4.0</rest-assured.version>
-        <junit-jupiter.version>5.8.2</junit-jupiter.version>
-        <org.json.version>20231013</org.json.version>
-        <assertj.version>3.22.0</assertj.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <junit-platform-surfire-provider.version>1.3.1</junit-platform-surfire-provider.version>
-        <maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
-        <maven-surfire-plugin.version>3.0.0</maven-surfire-plugin.version>
-        <jmockit.version>1.49</jmockit.version>
-        <junit-jupiter-params.version>5.8.3</junit-jupiter-params.version>
+        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+        <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
+        <aspectj.version>1.9.21</aspectj.version>
+        <allure.version>2.25.0</allure.version>
         <allure-maven.version>2.12.0</allure-maven.version>
-        <allure-maven.reportVersion>2.21.0</allure-maven.reportVersion>
-        <allure-maven.serveHost>127.0.0.102</allure-maven.serveHost>
-        <allure-maven.servePort>8063</allure-maven.servePort>
-        <allure-commandline.version>2.31.0</allure-commandline.version>
-        <allure-junit5.version>2.21.0</allure-junit5.version>
+
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-bom</artifactId>
+                <version>${allure.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <!-- PLAYWRIGHT... -->
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>playwright</artifactId>
             <version>1.44.0</version>
         </dependency>
+
+        <!-- ALLURE-->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.11.3</version>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-junit5</artifactId>
+            <version>2.29.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.github.cdimascio</groupId>
-            <artifactId>dotenv-java</artifactId>
-            <version>2.2.0</version>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>3.26.0</version>
-            <scope>test</scope>
-        </dependency>
+
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -71,89 +65,39 @@
             <artifactId>logback-classic</artifactId>
             <version>1.4.12</version>
         </dependency>
-
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-commandline</artifactId>
-            <version>${allure-commandline.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-junit5</artifactId>
-            <version>${allure-junit5.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-rest-assured</artifactId>
-            <version>${allure-junit5.version}</version>
-        </dependency>
     </dependencies>
+
     <build>
-    <plugins>
-        <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>${maven-compiler-plugin.version}</version>
-            <configuration>
-                <source>${java.version}</source>
-                <target>${java.version}</target>
-            </configuration>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>${maven-surfire-plugin.version}</version>
-            <configuration>
-                <failIfNoTests>true</failIfNoTests>
-                <properties>
-                    <property>
-                        <name>listener</name>
-                        <value>io.qameta.allure.junit5.AllureJunit5</value>
-                    </property>
-                </properties>
-                <systemPropertyVariables>
-                    <allure.results.directory>
-                        ${project.build.directory}/allure-results
-                    </allure.results.directory>
-                    <junit.jupiter.extensions.autodetection.enabled>
-                        true
-                    </junit.jupiter.extensions.autodetection.enabled>
-                </systemPropertyVariables>
-            </configuration>
-        </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <version>${maven-failsafe-plugin.version}</version>
-            <configuration>
-                <argLine>
-                    -javaagent:${settings.localRepository}/org/jmockit/jmockit/${jmockit.version}/jmockit-${jmockit.version}.jar
-                </argLine>
-                <properties>
-                    <property>
-                        <name>listener</name>
-                        <value>io.qameta.allure.junit5.AllureJunit5</value>
-                    </property>
-                </properties>
-                <systemPropertyVariables>
-                    <allure.results.directory>
-                        ${project.build.directory}/allure-results
-                    </allure.results.directory>
-                    <junit.jupiter.extensions.autodetection.enabled>
-                        true
-                    </junit.jupiter.extensions.autodetection.enabled>
-                </systemPropertyVariables>
-            </configuration>
-        </plugin>
-        <plugin>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-maven</artifactId>
-            <version>${allure-maven.version}</version>
-            <configuration>
-                <reportVersion>${allure-maven.reportVersion}</reportVersion>
-                <serveHost>${allure-maven.serveHost}</serveHost>
-                <servePort>${allure-maven.servePort}</servePort>
-            </configuration>
-        </plugin>
-    </plugins>
+        <plugins>
+            <!-- Maven -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
+                    <systemPropertyVariables>
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                        <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <!-- Allure Maven -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${allure-maven.version}</version>
+            </plugin>
+        </plugins>
     </build>
 </project>
