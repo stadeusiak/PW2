@@ -19,7 +19,7 @@ import java.util.Properties;
 
 @Slf4j
 @ExtendWith(TestWatcherExtension.class)
-public abstract  class BaseTest {
+public abstract class BaseTest {
 
     protected BrowserContext context;
     private String BASE_URL;
@@ -27,7 +27,9 @@ public abstract  class BaseTest {
     protected static Playwright playwright;
     protected static Browser browser;
     protected Page page;
+
     private static String USERNAME;
+
     private static String PASSWORD;
 
     @BeforeEach
@@ -40,12 +42,11 @@ public abstract  class BaseTest {
         log.info("Using Chrome executable path: " + chromePath);
 
         launchOptions.setExecutablePath(Path.of(chromePath));
-        launchOptions.setHeadless(true);
+        launchOptions.setHeadless(false);
 
         try {
             browser = playwright.chromium().launch(launchOptions);
-            context = browser.newContext();
-            page = context.newPage();
+            page = browser.newPage();
             page.navigate(BASE_URL);
         } catch (Exception e) {
             log.error("Failed to launch the browser or navigate to the URL.", e);
@@ -59,6 +60,7 @@ public abstract  class BaseTest {
             throw new RuntimeException("Login credentials are not set in environment variables.");
         }
     }
+
 
     private void loadProperties() {
         Properties properties = new Properties();
@@ -75,12 +77,8 @@ public abstract  class BaseTest {
         }
     }
 
-    public String getUsername() {
-        return USERNAME;
-    }
-
-    public String getPassword() {
-        return PASSWORD;
+    public String[] getCredentials() {
+        return new String[]{USERNAME, PASSWORD};
     }
 
     @AfterEach

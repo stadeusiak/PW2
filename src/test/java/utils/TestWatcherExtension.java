@@ -14,6 +14,7 @@ public class TestWatcherExtension implements TestWatcher {
 
     @Getter
     private static boolean testFailed = false;
+
     @Override
     public void testFailed(ExtensionContext context, Throwable cause) {
         testFailed = true;
@@ -34,7 +35,6 @@ public class TestWatcherExtension implements TestWatcher {
                 System.out.println("Screenshot taken: " + screenshotPath);
                 Allure.addAttachment("Failed_Test: " +testName, new ByteArrayInputStream(screenshot));
 
-
             } catch (Exception e) {
                 System.err.println("Failed to take screenshot: " + e.getMessage());
             } finally {
@@ -46,6 +46,7 @@ public class TestWatcherExtension implements TestWatcher {
 
     @Override
     public void testSuccessful(ExtensionContext context) {
-        System.out.println("### TEST PRZESZEDŁ - UDAŁO SIĘ! ###");
+        String testName = context.getDisplayName();
+        System.out.println(testName+"    ### SUCCESS ###");
     }
 }
