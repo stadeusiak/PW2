@@ -27,10 +27,11 @@ public abstract class BaseTest {
     protected static Playwright playwright;
     protected static Browser browser;
     protected Page page;
-
     private static String USERNAME;
-
     private static String PASSWORD;
+    private enum EnvironmentType {
+        LOCAL, JENKINS
+    }
 
     @BeforeEach
     public void setupTest() {
@@ -44,9 +45,22 @@ public abstract class BaseTest {
         launchOptions.setExecutablePath(Path.of(chromePath));
         launchOptions.setHeadless(false);
 
+        EnvironmentType environment = determineEnvironment();
+
+        switch (environment) {
+            case LOCAL -> {
+                log.info("Running in LOCAL mode (headful)");
+                launchOptions.setHeadless(false);
+            }
+            case JENKINS -> {
+                log.info("Running in JENKINS mode (headless)");
+                launchOptions.setHeadless(true);
+            }
+            default -> throw new IllegalStateException("Unknown environment type: " + environment);
+        }
+
         try {
             browser = playwright.chromium().launch(launchOptions);
-            context = browser.newContext(new Browser.NewContextOptions());
             page = browser.newPage();
             page.navigate(BASE_URL);
         } catch (Exception e) {
@@ -58,8 +72,18 @@ public abstract class BaseTest {
         PASSWORD = System.getenv("PASSWORD");
 
         if (USERNAME == null || PASSWORD == null) {
+
            log.warn("Login credentials are not set in environment variables.");
+           log.warn(    "Login credentials are not set in environment variables.");
+
         }
+    }
+
+    private EnvironmentType determineEnvironment() {
+        if (System.getenv("CI") != null || System.getenv("CHROME_PATH") != null) {
+            return EnvironmentType.JENKINS;
+        }
+        return EnvironmentType.LOCAL;
     }
 
 
