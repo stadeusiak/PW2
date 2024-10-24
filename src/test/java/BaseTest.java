@@ -2,10 +2,12 @@ import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import io.qameta.allure.Allure;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -54,9 +56,16 @@ abstract class BaseTest {
 
     @AfterEach
     public void tearDown() {
-        Optional.ofNullable(page).ifPresent(Page::close);
-        Optional.ofNullable(browser).ifPresent(Browser::close);
-        Optional.ofNullable(playwright).ifPresent(Playwright::close);
+        try {
+            byte[] screenshot = page.screenshot(new Page.ScreenshotOptions().setPath(Path.of("build/screenshots/login_test.png")));
+            Allure.addAttachment("Login Screen", new ByteArrayInputStream(screenshot));
+        } catch (Exception e) {
+            log.error("Error while taking screenshot in tearDown", e);
+        } finally {
+            Optional.ofNullable(page).ifPresent(Page::close);
+            Optional.ofNullable(browser).ifPresent(Browser::close);
+            Optional.ofNullable(playwright).ifPresent(Playwright::close);
+        }
     }
 
     private void loadProperties() {
