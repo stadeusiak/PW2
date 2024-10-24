@@ -28,9 +28,10 @@ abstract class BaseTest {
         var launchOptions = new BrowserType.LaunchOptions();
 
         String chromePath = Objects.requireNonNullElse(System.getenv("CHROME_PATH"), LOCAL_CHROME_PATH);
+        log.info("Using Chrome executable path: " + chromePath);
 
         launchOptions.setExecutablePath(Path.of(chromePath));
-        launchOptions.setHeadless(true);
+        launchOptions.setHeadless(false);
 
         try {
             browser = playwright.chromium().launch(launchOptions);
