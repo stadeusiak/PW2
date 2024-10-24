@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterEach;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Objects;
 
@@ -43,15 +44,9 @@ abstract class BaseTest {
 
     @AfterEach
     public void tearDown() {
-        if (page != null) {
-            page.close();
-        }
-        if (browser != null) {
-            browser.close();
-        }
-        if (playwright != null) {
-            playwright.close();
-        }
+        Optional.ofNullable(page).ifPresent(Page::close);
+        Optional.ofNullable(browser).ifPresent(Browser::close);
+        Optional.ofNullable(playwright).ifPresent(Playwright::close);
     }
 
     private void loadProperties() {
