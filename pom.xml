@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>spring.sta</groupId>
+    <groupId>playwright.sta</groupId>
     <artifactId>PW2</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -33,7 +33,7 @@
         <allure-maven.reportVersion>2.21.0</allure-maven.reportVersion>
         <allure-maven.serveHost>127.0.0.102</allure-maven.serveHost>
         <allure-maven.servePort>8063</allure-maven.servePort>
-        <allure-commandline.version>2.21.0</allure-commandline.version>
+        <allure-commandline.version>2.31.0</allure-commandline.version>
         <allure-junit5.version>2.21.0</allure-junit5.version>
     </properties>
 
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
+            <version>5.11.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -1,16 +1,16 @@
-import com.microsoft.playwright.Playwright;
-import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Objects;
 
 @Slf4j
 abstract class BaseTest {
@@ -20,6 +20,8 @@ abstract class BaseTest {
     protected Playwright playwright;
     protected Browser browser;
     protected Page page;
+    private String USERNAME;
+    private String PASSWORD;
 
     @BeforeEach
     public void setupTest() {
@@ -40,6 +42,13 @@ abstract class BaseTest {
         } catch (Exception e) {
             log.error("Failed to launch the browser or navigate to the URL.", e);
             throw new RuntimeException(e);
+        }
+
+        USERNAME = System.getenv("USERNAME");
+        PASSWORD = System.getenv("PASSWORD");
+
+        if (USERNAME == null || PASSWORD == null) {
+            throw new RuntimeException("Login credentials are not set in environment variables.");
         }
     }
 
@@ -63,5 +72,13 @@ abstract class BaseTest {
             log.error("Error during properties loading.", e);
             throw new RuntimeException("Error during properties loading.", e);
         }
+    }
+
+    public String getUsername() {
+        return USERNAME;
+    }
+
+    public String getPassword() {
+        return PASSWORD;
     }
 }
