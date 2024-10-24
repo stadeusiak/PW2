@@ -46,10 +46,11 @@ public abstract class BaseTest {
 
         try {
             browser = playwright.chromium().launch(launchOptions);
+            context = browser.newContext(new Browser.NewContextOptions());
             page = browser.newPage();
             page.navigate(BASE_URL);
         } catch (Exception e) {
-            log.error("Failed to launch the browser or navigate to the URL.", e);
+            log.warn("Failed to launch the browser or navigate to the URL.", e);
             throw new RuntimeException(e);
         }
 
@@ -57,7 +58,7 @@ public abstract class BaseTest {
         PASSWORD = System.getenv("PASSWORD");
 
         if (USERNAME == null || PASSWORD == null) {
-            throw new RuntimeException("Login credentials are not set in environment variables.");
+           log.warn("Login credentials are not set in environment variables.");
         }
     }
 
