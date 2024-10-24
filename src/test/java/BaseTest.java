@@ -14,9 +14,6 @@ import java.util.Objects;
 @Slf4j
 abstract class BaseTest {
 
-//    protected static final String BASE_URL = "https://www.saucedemo.com/";
-//    protected static final String LOCAL_CHROME_PATH = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-
     private String BASE_URL;
     private String LOCAL_CHROME_PATH;
     protected Playwright playwright;
