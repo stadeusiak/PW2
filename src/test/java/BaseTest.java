@@ -19,7 +19,6 @@ abstract class BaseTest {
 
     @BeforeEach
     public void setupTest() {
-        loadProperties();
 
         playwright = Playwright.create();
         var launchOptions = new BrowserType.LaunchOptions();
@@ -42,21 +41,6 @@ abstract class BaseTest {
     public void tearDown() {
         if (playwright != null) {
             playwright.close();
-        }
-    }
-
-    private void loadProperties() {
-        Properties properties = new Properties();
-        try (var input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
-            if (input == null) {
-                throw new RuntimeException("Can't find config.properties");
-            }
-            properties.load(input);
-            BASE_URL = properties.getProperty("base.url");
-            LOCAL_CHROME_PATH = properties.getProperty("chrome.path");
-        } catch (IOException e) {
-            logger.error("Error during properties loading.", e);
-            throw new RuntimeException("Error during properties loading.", e);
         }
     }
 }
